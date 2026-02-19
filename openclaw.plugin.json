@@ -1,0 +1,46 @@
+{
+  "id": "savings-agent",
+  "name": "Savings Agent",
+  "description": "Autonomous AI savings advisor. Manages onchain portfolios on Base with personalized hedging strategies. Self-sustaining via yield management fees.",
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "privateKey": {
+        "type": "string",
+        "description": "Agent wallet private key (hex, with 0x prefix)"
+      },
+      "rpcUrl": {
+        "type": "string",
+        "description": "Base RPC URL (Anvil for local dev, mainnet for production)",
+        "default": "http://127.0.0.1:8545"
+      },
+      "builderCode": {
+        "type": "string",
+        "description": "ERC-8021 builder code registered on base.dev",
+        "default": "savingsagent"
+      },
+      "dashboardPort": {
+        "type": "number",
+        "description": "Port for the public dashboard HTTP server",
+        "default": 3402
+      },
+      "rebalanceIntervalMinutes": {
+        "type": "number",
+        "description": "How often the autonomous loop checks for drift",
+        "default": 60
+      },
+      "rebalanceThresholdPercent": {
+        "type": "number",
+        "description": "Drift threshold (%) before triggering rebalance",
+        "default": 5
+      },
+      "managementFeeBps": {
+        "type": "number",
+        "description": "Management fee in basis points (100 = 1%)",
+        "default": 200
+      }
+    },
+    "required": ["privateKey"]
+  }
+}
