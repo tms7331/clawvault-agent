@@ -1,6 +1,7 @@
 import { formatUnits } from "viem";
 import { sendTxWithBuilderCode, waitForTx } from "../lib/base-client.js";
 import { ADDRESSES, SAVINGS_VAULT_ABI } from "../lib/contracts.js";
+import { syncToSupabase } from "../lib/supabase-sync.js";
 import type { PluginContext } from "../lib/types.js";
 
 const USDC_DECIMALS = 6;
@@ -92,6 +93,8 @@ export async function executeHarvest(
   ctx.store.addTransactionToPlan(planId, harvestHash);
 
   ctx.store.updatePlan(planId, { lastHarvestedAt: Date.now() });
+
+  syncToSupabase(ctx).catch(() => {});
 
   return {
     harvested: true,

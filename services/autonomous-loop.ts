@@ -1,6 +1,5 @@
 import { executeRebalance } from "../tools/rebalance.js";
 import { executeHarvest } from "../tools/harvest-yield.js";
-import { syncToSupabase } from "../lib/supabase-sync.js";
 import type { PluginContext } from "../lib/types.js";
 
 const MIN_HARVEST_USDC = 0.001; // $0.001 minimum to harvest
@@ -74,8 +73,6 @@ export function startAutonomousLoop(ctx: PluginContext): () => void {
         `[clawvault] Sustainability: ${sustainable ? "YES" : "NO"} ` +
           `(net: $${net.toFixed(4)})`
       );
-
-      await syncToSupabase(ctx);
     } catch (err) {
       console.error("[clawvault] Autonomous loop error:", err);
     }

@@ -7,6 +7,7 @@ import {
   HEDGE_ROUTER_ABI,
   SAVINGS_VAULT_ABI,
 } from "../lib/contracts.js";
+import { syncToSupabase } from "../lib/supabase-sync.js";
 import type { PluginContext } from "../lib/types.js";
 
 const USDC_DECIMALS = 6;
@@ -165,6 +166,8 @@ export async function executeRebalance(
     status: "active",
     lastRebalancedAt: Date.now(),
   });
+
+  syncToSupabase(ctx).catch(() => {});
 
   return { rebalanced: true, trades, maxDrift: snapshot.drift.maxDrift };
 }

@@ -6,6 +6,7 @@ import {
   SAVINGS_VAULT_ABI,
   HEDGE_ROUTER_ABI,
 } from "../lib/contracts.js";
+import { syncToSupabase } from "../lib/supabase-sync.js";
 import type { PluginContext, TransactionRecord } from "../lib/types.js";
 
 const USDC_DECIMALS = 6;
@@ -223,6 +224,8 @@ export function registerExecuteTrades(api: any, ctx: PluginContext) {
 
       // Mark plan as active
       ctx.store.updatePlan(plan.planId, { status: "active" });
+
+      syncToSupabase(ctx).catch(() => {});
 
       return {
         content: [
