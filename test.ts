@@ -15,7 +15,7 @@ const fakeApi = {
     privateKey:
       process.env.CLAWVAULT_PRIVATE_KEY ??
       "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80", // Anvil default key
-    rpcUrl: process.env.BASE_RPC_URL ?? "https://sepolia.base.org",
+    rpcUrl: process.env.BASE_RPC_URL ?? "https://ethereum-sepolia-rpc.publicnode.com",
     builderCode: "clawvault",
     dashboardPort: 3402,
     rebalanceIntervalMinutes: 1, // 1 min for testing

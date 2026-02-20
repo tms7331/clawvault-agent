@@ -12,8 +12,8 @@
       },
       "rpcUrl": {
         "type": "string",
-        "description": "Base Sepolia RPC URL (Anvil for local dev, Sepolia for testing)",
-        "default": "https://sepolia.base.org"
+        "description": "Ethereum Sepolia RPC URL",
+        "default": "https://ethereum-sepolia-rpc.publicnode.com"
       },
       "builderCode": {
         "type": "string",

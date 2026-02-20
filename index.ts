@@ -16,7 +16,7 @@ let dashboardCleanup: (() => void) | null = null;
 export default function register(api: any) {
   const config: PluginConfig = {
     privateKey: api.config?.privateKey ?? process.env.CLAWVAULT_PRIVATE_KEY ?? "",
-    rpcUrl: api.config?.rpcUrl ?? process.env.BASE_RPC_URL ?? "https://sepolia.base.org",
+    rpcUrl: api.config?.rpcUrl ?? process.env.BASE_RPC_URL ?? "https://ethereum-sepolia-rpc.publicnode.com",
     builderCode: api.config?.builderCode ?? process.env.BUILDER_CODE ?? "clawvault",
     dashboardPort: api.config?.dashboardPort ?? (Number(process.env.DASHBOARD_PORT) || 3402),
     rebalanceIntervalMinutes:

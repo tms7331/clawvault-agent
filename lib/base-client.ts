@@ -10,7 +10,7 @@ import {
   encodeFunctionData,
 } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { baseSepolia } from "viem/chains";
+import { sepolia } from "viem/chains";
 import { appendBuilderCode } from "./builder-codes.js";
 
 export interface BaseClient {
@@ -29,15 +29,15 @@ export function createBaseClient(
 ): BaseClient {
   const account = privateKeyToAccount(privateKey as `0x${string}`);
 
-  // Use Base Sepolia chain config but allow custom RPC URL (for Anvil)
+  // Use Ethereum Sepolia chain config but allow custom RPC URL
   const chain = {
-    ...baseSepolia,
+    ...sepolia,
     rpcUrls: rpcUrl
       ? { default: { http: [rpcUrl] } }
-      : baseSepolia.rpcUrls,
+      : sepolia.rpcUrls,
   } as Chain;
 
-  const transport = http(rpcUrl ?? baseSepolia.rpcUrls.default.http[0]);
+  const transport = http(rpcUrl ?? sepolia.rpcUrls.default.http[0]);
 
   const publicClient = createPublicClient({
     chain,
