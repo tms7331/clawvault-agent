@@ -14,18 +14,16 @@ import { registerCheckPortfolio } from "./tools/check-portfolio.js";
 import { registerRebalance } from "./tools/rebalance.js";
 import { registerHarvestYield } from "./tools/harvest-yield.js";
 import { startAutonomousLoop } from "./services/autonomous-loop.js";
-import { startDashboardServer } from "./services/dashboard-server.js";
+import { syncToSupabase } from "./lib/supabase-sync.js";
 import type { PluginConfig, PluginContext } from "./lib/types.js";
 
 let loopCleanup: (() => void) | null = null;
-let dashboardCleanup: (() => void) | null = null;
 
 export default function register(api: any) {
   const config: PluginConfig = {
     privateKey: api.config?.privateKey ?? process.env.CLAWVAULT_PRIVATE_KEY ?? "",
     rpcUrl: api.config?.rpcUrl ?? process.env.BASE_RPC_URL ?? "https://ethereum-sepolia-rpc.publicnode.com",
     builderCode: api.config?.builderCode ?? process.env.BUILDER_CODE ?? "clawvault",
-    dashboardPort: api.config?.dashboardPort ?? (Number(process.env.DASHBOARD_PORT) || 3402),
     rebalanceIntervalMinutes:
       api.config?.rebalanceIntervalMinutes ??
       (Number(process.env.REBALANCE_INTERVAL_MINUTES) || 60),
@@ -35,6 +33,8 @@ export default function register(api: any) {
     managementFeeBps:
       api.config?.managementFeeBps ??
       (Number(process.env.MANAGEMENT_FEE_BPS) || 200),
+    supabaseUrl: api.config?.supabaseUrl ?? process.env.SUPABASE_URL ?? "",
+    supabaseServiceKey: api.config?.supabaseServiceKey ?? process.env.SUPABASE_SERVICE_KEY ?? "",
   };
 
   if (!config.privateKey) {
@@ -61,6 +61,9 @@ export default function register(api: any) {
   registerRebalance(api, ctx);
   registerHarvestYield(api, ctx);
 
+  // Fire-and-forget initial sync to Supabase
+  syncToSupabase(ctx).catch(() => {});
+
   // Register background autonomous loop as a service
   api.registerService({
     id: "clawvault-loop",
@@ -69,17 +72,6 @@ export default function register(api: any) {
     },
     stop: () => {
       if (loopCleanup) loopCleanup();
-    },
-  });
-
-  // Register dashboard HTTP server as a service
-  api.registerService({
-    id: "clawvault-dashboard",
-    start: () => {
-      dashboardCleanup = startDashboardServer(ctx);
-    },
-    stop: () => {
-      if (dashboardCleanup) dashboardCleanup();
     },
   });
 }

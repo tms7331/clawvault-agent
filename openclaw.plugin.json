@@ -20,10 +20,13 @@
         "description": "ERC-8021 builder code registered on base.dev",
         "default": "clawvault"
       },
-      "dashboardPort": {
-        "type": "number",
-        "description": "Port for the public dashboard HTTP server",
-        "default": 3402
+      "supabaseUrl": {
+        "type": "string",
+        "description": "Supabase project URL (e.g. https://xyz.supabase.co)"
+      },
+      "supabaseServiceKey": {
+        "type": "string",
+        "description": "Supabase service_role key (bypasses RLS for writes)"
       },
       "rebalanceIntervalMinutes": {
         "type": "number",

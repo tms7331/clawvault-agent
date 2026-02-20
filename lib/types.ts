@@ -65,10 +65,11 @@ export interface PluginConfig {
   privateKey: string;
   rpcUrl: string;
   builderCode: string;
-  dashboardPort: number;
   rebalanceIntervalMinutes: number;
   rebalanceThresholdPercent: number;
   managementFeeBps: number;
+  supabaseUrl: string;
+  supabaseServiceKey: string;
 }
 
 export interface PluginContext {
