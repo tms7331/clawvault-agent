@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { homedir } from "node:os";
 import type { CostEntry, RevenueEntry } from "./types.js";
 
-const DATA_DIR = join(homedir(), ".savings-agent");
+const DATA_DIR = join(homedir(), ".clawvault");
 
 export class CostTracker {
   private costs: CostEntry[] = [];

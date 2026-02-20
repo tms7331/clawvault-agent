@@ -1,5 +1,5 @@
 /**
- * Local test for the savings agent plugin.
+ * Local test for the ClawVault plugin.
  * Run: npx tsx test.ts
  *
  * This mocks the OpenClaw API and tests tool registration + basic execution.
@@ -13,10 +13,10 @@ const services: Map<string, any> = new Map();
 const fakeApi = {
   config: {
     privateKey:
-      process.env.SAVINGS_AGENT_PRIVATE_KEY ??
+      process.env.CLAWVAULT_PRIVATE_KEY ??
       "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80", // Anvil default key
     rpcUrl: process.env.BASE_RPC_URL ?? "https://sepolia.base.org",
-    builderCode: "savingsagent",
+    builderCode: "clawvault",
     dashboardPort: 3402,
     rebalanceIntervalMinutes: 1, // 1 min for testing
     rebalanceThresholdPercent: 5,
@@ -41,8 +41,8 @@ console.log(`\nTools registered: ${tools.size}`);
 console.log(`Services registered: ${services.size}`);
 
 // Test create_plan tool
-console.log("\n--- Testing savings_create_plan ---");
-const createPlan = tools.get("savings_create_plan");
+console.log("\n--- Testing clawvault_create_plan ---");
+const createPlan = tools.get("clawvault_create_plan");
 if (createPlan) {
   const result = await createPlan.execute("test-1", {
     goal: "I want to buy a house in 3-5 years",

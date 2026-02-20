@@ -19,7 +19,7 @@ export async function executeHarvest(
     return { harvested: false, pendingYield: "0", feeCollected: 0 };
   }
 
-  const builderCode = ctx.config.builderCode ?? "savingsagent";
+  const builderCode = ctx.config.builderCode ?? "clawvault";
   const pc = ctx.client.publicClient;
   const agentAddr = ctx.client.account.address;
 
@@ -103,7 +103,7 @@ export async function executeHarvest(
 
 export function registerHarvestYield(api: any, ctx: PluginContext) {
   api.registerTool({
-    name: "savings_harvest_yield",
+    name: "clawvault_harvest_yield",
     description:
       "Harvest accrued yield from the SavingsVault. First calls drip() to " +
       "accrue time-based yield, then harvests. A management fee (default 2%) " +

@@ -15,9 +15,9 @@ let dashboardCleanup: (() => void) | null = null;
 
 export default function register(api: any) {
   const config: PluginConfig = {
-    privateKey: api.config?.privateKey ?? process.env.SAVINGS_AGENT_PRIVATE_KEY ?? "",
+    privateKey: api.config?.privateKey ?? process.env.CLAWVAULT_PRIVATE_KEY ?? "",
     rpcUrl: api.config?.rpcUrl ?? process.env.BASE_RPC_URL ?? "https://sepolia.base.org",
-    builderCode: api.config?.builderCode ?? process.env.BUILDER_CODE ?? "savingsagent",
+    builderCode: api.config?.builderCode ?? process.env.BUILDER_CODE ?? "clawvault",
     dashboardPort: api.config?.dashboardPort ?? (Number(process.env.DASHBOARD_PORT) || 3402),
     rebalanceIntervalMinutes:
       api.config?.rebalanceIntervalMinutes ??
@@ -32,7 +32,7 @@ export default function register(api: any) {
 
   if (!config.privateKey) {
     console.error(
-      "[savings-agent] No private key configured. Set SAVINGS_AGENT_PRIVATE_KEY env var or plugin config."
+      "[clawvault] No private key configured. Set CLAWVAULT_PRIVATE_KEY env var or plugin config."
     );
     return;
   }
@@ -43,9 +43,9 @@ export default function register(api: any) {
 
   const ctx: PluginContext = { client, store, costTracker, config };
 
-  console.log(`[savings-agent] Initializing with wallet ${client.account.address}`);
-  console.log(`[savings-agent] RPC: ${config.rpcUrl}`);
-  console.log(`[savings-agent] Builder code: ${config.builderCode}`);
+  console.log(`[clawvault] Initializing with wallet ${client.account.address}`);
+  console.log(`[clawvault] RPC: ${config.rpcUrl}`);
+  console.log(`[clawvault] Builder code: ${config.builderCode}`);
 
   // Register all agent tools
   registerCreatePlan(api, ctx);
@@ -56,7 +56,7 @@ export default function register(api: any) {
 
   // Register background autonomous loop as a service
   api.registerService({
-    id: "savings-agent-loop",
+    id: "clawvault-loop",
     start: () => {
       loopCleanup = startAutonomousLoop(ctx);
     },
@@ -67,7 +67,7 @@ export default function register(api: any) {
 
   // Register dashboard HTTP server as a service
   api.registerService({
-    id: "savings-agent-dashboard",
+    id: "clawvault-dashboard",
     start: () => {
       dashboardCleanup = startDashboardServer(ctx);
     },

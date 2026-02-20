@@ -1,4 +1,4 @@
-# Savings Agent: Technical Specification
+# ClawVault: Technical Specification
 
 ## Table of Contents
 
@@ -69,13 +69,13 @@ The project is a **single git repo** with three independent packages managed via
 - Run `anvil` to get a local Base-like chain at `http://127.0.0.1:8545`
 - Deploy contracts with `forge script ... --rpc-url http://127.0.0.1:8545`
 - Point agent's `rpcUrl` config to Anvil for testing
-- Switch to `https://mainnet.base.org` for production
+- Switch to `https://sepolia.base.org` for production
 
 ### Data Flow
 
 1. **User -> OpenClaw Agent**: "I want to save for a house in 3-5 years"
-2. **Agent -> `savings_create_plan` tool**: Analyzes goal, returns allocation
-3. **Agent -> `savings_execute_trades` tool**: Sends transactions to Base/Anvil
+2. **Agent -> `clawvault_create_plan` tool**: Analyzes goal, returns allocation
+3. **Agent -> `clawvault_execute_trades` tool**: Sends transactions to Base/Anvil
 4. **Background Service (loop)**: Every N minutes, checks drift, triggers rebalance/harvest
 5. **Dashboard Service**: Serves `frontend/index.html` + JSON API, reads from shared persistence
 
@@ -84,7 +84,7 @@ The project is a **single git repo** with three independent packages managed via
 ## 2. Project Structure
 
 ```
-savingsagent/                       # Monorepo root
+clawvault/                       # Monorepo root
 ├── package.json                    # Root: npm workspaces config
 ├── .gitignore                      # Node, Foundry, env files
 ├── .env.example                    # Template for env vars
@@ -96,11 +96,11 @@ savingsagent/                       # Monorepo root
 │   ├── openclaw.plugin.json        # OpenClaw metadata + configSchema
 │   ├── index.ts                    # Entry: registers tools + services
 │   ├── tools/
-│   │   ├── create-plan.ts          # savings_create_plan tool
-│   │   ├── execute-trades.ts       # savings_execute_trades tool
-│   │   ├── check-portfolio.ts      # savings_check_portfolio tool
-│   │   ├── rebalance.ts            # savings_rebalance tool
-│   │   └── harvest-yield.ts        # savings_harvest_yield tool
+│   │   ├── create-plan.ts          # clawvault_create_plan tool
+│   │   ├── execute-trades.ts       # clawvault_execute_trades tool
+│   │   ├── check-portfolio.ts      # clawvault_check_portfolio tool
+│   │   ├── rebalance.ts            # clawvault_rebalance tool
+│   │   └── harvest-yield.ts        # clawvault_harvest_yield tool
 │   ├── lib/
 │   │   ├── base-client.ts          # viem publicClient + walletClient
 │   │   ├── builder-codes.ts        # ERC-8021 calldata suffix helpers
@@ -133,11 +133,11 @@ savingsagent/                       # Monorepo root
 
 ## 3. Plugin Registration
 
-### Root package.json (savingsagent/package.json)
+### Root package.json (clawvault/package.json)
 
 ```json
 {
-  "name": "savings-agent-monorepo",
+  "name": "clawvault-monorepo",
   "private": true,
   "workspaces": ["agent", "frontend"]
 }
@@ -147,7 +147,7 @@ savingsagent/                       # Monorepo root
 
 ```json
 {
-  "name": "savings-agent",
+  "name": "clawvault",
   "version": "0.1.0",
   "type": "module",
   "openclaw": {
@@ -163,8 +163,8 @@ savingsagent/                       # Monorepo root
 
 ```json
 {
-  "id": "savings-agent",
-  "name": "Savings Agent",
+  "id": "clawvault",
+  "name": "ClawVault",
   "description": "Autonomous AI savings advisor. Manages onchain portfolios on Base with personalized hedging strategies. Self-sustaining via yield management fees.",
   "configSchema": {
     "type": "object",
@@ -176,13 +176,13 @@ savingsagent/                       # Monorepo root
       },
       "rpcUrl": {
         "type": "string",
-        "description": "Base mainnet RPC URL",
-        "default": "https://mainnet.base.org"
+        "description": "Base Sepolia RPC URL",
+        "default": "https://sepolia.base.org"
       },
       "builderCode": {
         "type": "string",
         "description": "ERC-8021 builder code registered on base.dev",
-        "default": "savingsagent"
+        "default": "clawvault"
       },
       "dashboardPort": {
         "type": "number",
@@ -242,14 +242,14 @@ export default function register(api: any) {
 
   // Register background autonomous loop
   api.registerService({
-    id: "savings-agent-loop",
+    id: "clawvault-loop",
     start: () => startAutonomousLoop(ctx),
     stop: () => { /* cleanup interval */ },
   });
 
   // Register dashboard HTTP server (serves frontend/index.html + JSON APIs)
   api.registerService({
-    id: "savings-agent-dashboard",
+    id: "clawvault-dashboard",
     start: () => startDashboardServer(ctx),
     stop: () => { /* close server */ },
   });
@@ -260,14 +260,14 @@ export default function register(api: any) {
 
 ## 4. Tool Specifications
 
-### 4.1 savings_create_plan
+### 4.1 clawvault_create_plan
 
 **Purpose:** Analyze a user's savings goal and produce a structured allocation plan.
 
 ```typescript
 // tools/create-plan.ts
 {
-  name: "savings_create_plan",
+  name: "clawvault_create_plan",
   description: `Create a savings plan based on a user's goal description.
     Analyzes the timeline, risk tolerance, and objectives to produce
     a target asset allocation. Returns a plan with percentage allocations
@@ -320,13 +320,13 @@ export default function register(api: any) {
 }
 ```
 
-### 4.2 savings_execute_trades
+### 4.2 clawvault_execute_trades
 
 **Purpose:** Execute onchain transactions to match a plan's target allocation.
 
 ```typescript
 {
-  name: "savings_execute_trades",
+  name: "clawvault_execute_trades",
   description: `Execute onchain trades on Base to match a savings plan's target allocation.
     Deposits USDC into the yield vault for the stable portion, and swaps USDC
     for hedge tokens via the HedgeRouter for other allocations.
@@ -337,7 +337,7 @@ export default function register(api: any) {
     properties: {
       planId: {
         type: "string",
-        description: "The plan ID returned by savings_create_plan"
+        description: "The plan ID returned by clawvault_create_plan"
       }
     },
     required: ["planId"]
@@ -359,13 +359,13 @@ export default function register(api: any) {
 6. Track gas costs in `CostTracker`
 7. Return summary of executed trades
 
-### 4.3 savings_check_portfolio
+### 4.3 clawvault_check_portfolio
 
 **Purpose:** Read current onchain balances and compare to target allocation.
 
 ```typescript
 {
-  name: "savings_check_portfolio",
+  name: "clawvault_check_portfolio",
   description: `Check the current status of a savings plan. Returns current holdings,
     their USDC values, drift from target allocation, and unrealized P&L.`,
   parameters: {
@@ -394,13 +394,13 @@ export default function register(api: any) {
 5. Calculate drift per bucket: `abs(current% - target%)`
 6. Return portfolio status
 
-### 4.4 savings_rebalance
+### 4.4 clawvault_rebalance
 
 **Purpose:** Detect drift and execute trades to bring allocation back to target.
 
 ```typescript
 {
-  name: "savings_rebalance",
+  name: "clawvault_rebalance",
   description: `Check if a savings plan has drifted beyond the threshold and execute
     trades to rebalance to the target allocation. Only trades if drift exceeds
     the configured threshold.`,
@@ -419,7 +419,7 @@ export default function register(api: any) {
 ```
 
 **Execution Logic:**
-1. Call `savings_check_portfolio` logic to get current allocation
+1. Call `clawvault_check_portfolio` logic to get current allocation
 2. For each bucket, calculate delta: `targetAmount - currentAmount`
 3. If max drift < threshold, return "no rebalance needed"
 4. Otherwise, for each bucket:
@@ -429,13 +429,13 @@ export default function register(api: any) {
 6. Update `PortfolioStore` with new tx hashes
 7. Return rebalance summary
 
-### 4.5 savings_harvest_yield
+### 4.5 clawvault_harvest_yield
 
 **Purpose:** Claim yield from the vault, skim management fee, report revenue.
 
 ```typescript
 {
-  name: "savings_harvest_yield",
+  name: "clawvault_harvest_yield",
   description: `Harvest accrued yield from the SavingsVault. A management fee
     (configurable, default 2%) is sent to the agent's operating wallet to
     fund compute costs. Remaining yield stays in the user's portfolio.`,
@@ -721,7 +721,7 @@ contract HedgeRouter is Ownable {
 
 | Contract | Constructor Args |
 |----------|-----------------|
-| HedgeRouter | `usdc = 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913` (USDC on Base) |
+| HedgeRouter | `usdc = 0x... (MockUSDC on Base Sepolia)` (USDC on Base) |
 | HedgeToken (RE) | `"Real Estate Hedge", "RE-HEDGE", routerAddress` |
 | HedgeToken (SP) | `"Equity Hedge", "SP-HEDGE", routerAddress` |
 | HedgeToken (BOND) | `"Bond Hedge", "BOND-HEDGE", routerAddress` |
@@ -740,7 +740,7 @@ contract HedgeRouter is Ownable {
 
 ### Registration
 
-Register the builder code `savingsagent` on [base.dev](https://base.dev). This maps the code to the agent's payout address in the on-chain registry.
+Register the builder code `clawvault` on [base.dev](https://base.dev). This maps the code to the agent's payout address in the on-chain registry.
 
 ### Implementation
 
@@ -810,7 +810,7 @@ Builder codes are verifiable by parsing the last bytes of any transaction's call
 
 ### Registration
 
-Register the savings agent in the ERC-8004 Identity Registry on Base:
+Register the ClawVault agent in the ERC-8004 Identity Registry on Base:
 
 ```typescript
 // One-time registration script
@@ -829,7 +829,7 @@ Host at the dashboard's public URL:
 ```json
 {
   "type": "https://eips.ethereum.org/EIPS/eip-8004#registration-v1",
-  "name": "Savings Agent",
+  "name": "ClawVault",
   "description": "Autonomous AI savings advisor managing onchain portfolios on Base",
   "image": "",
   "services": [
@@ -936,11 +936,11 @@ Since we can't directly meter OpenClaw's LLM calls from within a plugin, we esti
 
 | Tool Call | Estimated Cost |
 |-----------|---------------|
-| `savings_create_plan` | $0.03 (involves LLM reasoning) |
-| `savings_execute_trades` | $0.01 (mostly onchain, minimal LLM) |
-| `savings_check_portfolio` | $0.01 |
-| `savings_rebalance` | $0.02 (LLM decides whether to trade) |
-| `savings_harvest_yield` | $0.01 |
+| `clawvault_create_plan` | $0.03 (involves LLM reasoning) |
+| `clawvault_execute_trades` | $0.01 (mostly onchain, minimal LLM) |
+| `clawvault_check_portfolio` | $0.01 |
+| `clawvault_rebalance` | $0.02 (LLM decides whether to trade) |
+| `clawvault_harvest_yield` | $0.01 |
 | Autonomous loop iteration (no trade) | $0.005 |
 
 ### Autonomous Loop
@@ -1026,7 +1026,7 @@ export function startDashboardServer(ctx: PluginContext): () => void {
   });
 
   server.listen(port, () => {
-    console.log(`[savings-agent] Dashboard running at http://localhost:${port}`);
+    console.log(`[clawvault] Dashboard running at http://localhost:${port}`);
   });
 
   return () => server.close();
@@ -1086,7 +1086,7 @@ Uses `fetch("/api/stats")` on load and every 30 seconds. No framework — vanill
 All data persisted as JSON files in a configurable data directory:
 
 ```
-~/.savings-agent/
+~/.clawvault/
 ├── plans.json            # All savings plans
 ├── transactions.json     # Transaction history
 ├── costs.json            # Compute + gas cost log
@@ -1149,11 +1149,11 @@ interface ContractAddresses {
 
 ```env
 # Required
-SAVINGS_AGENT_PRIVATE_KEY=0x...    # Agent wallet private key
+CLAWVAULT_PRIVATE_KEY=0x...    # Agent wallet private key
 
 # Optional (have defaults)
-BASE_RPC_URL=https://mainnet.base.org
-BUILDER_CODE=savingsagent
+BASE_RPC_URL=https://sepolia.base.org
+BUILDER_CODE=clawvault
 DASHBOARD_PORT=3402
 REBALANCE_INTERVAL_MINUTES=60
 REBALANCE_THRESHOLD_PERCENT=5
@@ -1166,7 +1166,7 @@ Stored in `agent/lib/contracts.ts` after deployment. Updated once during initial
 
 ```typescript
 export const ADDRESSES: ContractAddresses = {
-  usdc: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",  // USDC on Base mainnet
+  usdc: "0x... (MockUSDC on Base Sepolia)",  // USDC on Base Sepolia
   savingsVault: "0x...",   // deployed
   hedgeRouter: "0x...",    // deployed
   reHedge: "0x...",        // deployed
@@ -1202,7 +1202,7 @@ export const ANVIL_ADDRESSES: ContractAddresses = {
 ### Step 1: Install Dependencies
 
 ```bash
-cd savingsagent
+cd clawvault
 npm install           # installs agent + frontend workspaces
 ```
 
@@ -1210,20 +1210,20 @@ npm install           # installs agent + frontend workspaces
 
 ```bash
 # Terminal 1: Start Anvil
-cd savingsagent/contracts
+cd clawvault/contracts
 anvil
 
 # Terminal 2: Deploy contracts to Anvil
-cd savingsagent/contracts
+cd clawvault/contracts
 forge script script/Deploy.s.sol --rpc-url http://127.0.0.1:8545 \
   --broadcast --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
 ```
 
-For Base mainnet:
+For Base Sepolia:
 ```bash
-cd savingsagent/contracts
-forge script script/Deploy.s.sol --rpc-url https://mainnet.base.org \
-  --broadcast --private-key $SAVINGS_AGENT_PRIVATE_KEY
+cd clawvault/contracts
+forge script script/Deploy.s.sol --rpc-url https://sepolia.base.org \
+  --broadcast --private-key $CLAWVAULT_PRIVATE_KEY
 ```
 
 Update `agent/lib/contracts.ts` with deployed addresses.
@@ -1240,8 +1240,8 @@ Update `agent/lib/contracts.ts` with deployed addresses.
 
 ```bash
 # Point OpenClaw to the agent/ subfolder (that's where the plugin manifest lives)
-openclaw plugins install -l /path/to/savingsagent/agent
-openclaw plugins enable savings-agent
+openclaw plugins install -l /path/to/clawvault/agent
+openclaw plugins enable clawvault
 openclaw gateway restart
 openclaw plugins list   # verify
 ```
@@ -1264,8 +1264,8 @@ Message the OpenClaw agent:
 > "I want to save for a house in 3-5 years. I have 100 USDC to start."
 
 The agent should:
-1. Call `savings_create_plan`
-2. Call `savings_execute_trades`
+1. Call `clawvault_create_plan`
+2. Call `clawvault_execute_trades`
 3. Confirm trades executed with tx hashes
 4. Dashboard should update with new plan and transactions
 
@@ -1292,7 +1292,7 @@ No other runtime dependencies needed. `viem` handles everything we need for onch
 
 | Contract/Protocol | Address on Base | Purpose |
 |-------------------|-----------------|---------|
-| USDC | `0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913` | Base currency for all operations |
+| USDC | `0x... (MockUSDC on Base Sepolia)` | Base currency for all operations |
 | ERC-8004 Identity Registry | TBD (check base deployment) | Agent identity registration |
 | ERC-8021 Builder Registry | TBD (register on base.dev) | Builder code payout mapping |
 
@@ -1305,13 +1305,13 @@ User: "Save for a house, 3-5 years, 100 USDC"
          │
          ▼
 ┌─────────────────┐
-│ savings_create_  │
+│ clawvault_create_  │
 │ plan             │──► Returns plan: 50/25/20/5 allocation
 └────────┬────────┘
          │
          ▼
 ┌─────────────────┐    ┌──────────────┐
-│ savings_execute_ │    │  Base Mainnet │
+│ clawvault_execute_ │    │  Base Sepolia │
 │ trades           │──► │              │
 └────────┬────────┘    │  1. approve() │
          │              │  2. vault.    │
@@ -1335,14 +1335,14 @@ User: "Save for a house, 3-5 years, 100 USDC"
 
 ## Appendix B: Builder Code Calldata Example
 
-For builder code `savingsagent` (13 bytes):
+For builder code `clawvault` (13 bytes):
 
 ```
 Original calldata: 0xa9059cbb000000000000000000000000...
 Suffix:            0d736176696e67736167656e7400 8021802180218021802180218021802180218021
                    ^^ ^^^^^^^^^^^^^^^^^^^^^^^^ ^^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                    |  |                        |  |
-                   |  "savingsagent" (hex)      |  ERC-8021 marker (16 bytes)
+                   |  "clawvault" (hex)      |  ERC-8021 marker (16 bytes)
                    codesLength (13)             schemaId (0)
 ```
 

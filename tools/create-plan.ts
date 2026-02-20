@@ -87,7 +87,7 @@ function computeAllocation(
 
 export function registerCreatePlan(api: any, ctx: PluginContext) {
   api.registerTool({
-    name: "savings_create_plan",
+    name: "clawvault_create_plan",
     description:
       "Create a savings plan based on a user's goal description. " +
       "Analyzes the timeline, risk tolerance, and objectives to produce " +

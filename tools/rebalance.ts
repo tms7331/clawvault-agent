@@ -32,7 +32,7 @@ export async function executeRebalance(
   const plan = ctx.store.getPlan(planId);
   if (!plan) return { rebalanced: false, trades: [], maxDrift: 0 };
 
-  const builderCode = ctx.config.builderCode ?? "savingsagent";
+  const builderCode = ctx.config.builderCode ?? "clawvault";
   const totalValue = snapshot.totalValueUsdc;
   const trades: string[] = [];
 
@@ -171,7 +171,7 @@ export async function executeRebalance(
 
 export function registerRebalance(api: any, ctx: PluginContext) {
   api.registerTool({
-    name: "savings_rebalance",
+    name: "clawvault_rebalance",
     description:
       "Check if a savings plan has drifted beyond the threshold and execute " +
       "trades to rebalance to the target allocation. Only trades if drift exceeds " +

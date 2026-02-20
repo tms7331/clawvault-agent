@@ -1,6 +1,6 @@
 {
-  "id": "savings-agent",
-  "name": "Savings Agent",
+  "id": "clawvault",
+  "name": "ClawVault",
   "description": "Autonomous AI savings advisor. Manages onchain portfolios on Base with personalized hedging strategies. Self-sustaining via yield management fees.",
   "configSchema": {
     "type": "object",
@@ -18,7 +18,7 @@
       "builderCode": {
         "type": "string",
         "description": "ERC-8021 builder code registered on base.dev",
-        "default": "savingsagent"
+        "default": "clawvault"
       },
       "dashboardPort": {
         "type": "number",

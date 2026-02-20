@@ -167,7 +167,7 @@ export async function getPortfolioSnapshot(
 
 export function registerCheckPortfolio(api: any, ctx: PluginContext) {
   api.registerTool({
-    name: "savings_check_portfolio",
+    name: "clawvault_check_portfolio",
     description:
       "Check the current status of a savings plan. Returns current holdings, " +
       "their USDC values, drift from target allocation, and total portfolio value.",

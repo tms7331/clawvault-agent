@@ -1,10 +1,10 @@
-# Savings Agent: Product Requirements Document
+# ClawVault: Product Requirements Document
 
 ## Project Overview
 
-**Name:** Savings Agent
+**Name:** ClawVault
 **Type:** OpenClaw Plugin (TypeScript)
-**Chain:** Base Mainnet
+**Chain:** Base Sepolia
 **Hackathon:** Base Self-Sustaining Autonomous Agents ($10,000 Prize)
 **Tagline:** An autonomous AI savings advisor that manages onchain portfolios and funds its own compute through management fees.
 
@@ -59,7 +59,7 @@ Today this requires manual effort or expensive human advisors. An autonomous onc
 | F5 | **Public Dashboard** | A web page at a public URL showing: wallet balance (ETH + USDC), cumulative compute costs, cumulative fee revenue, net sustainability status, recent transactions with BaseScan links. No authentication required. |
 | F6 | **Cost Tracking** | Track every LLM API call and its estimated cost. Persist to disk. Expose via dashboard. |
 | F7 | **Yield Harvesting** | Agent tool that claims yield from the savings vault and skims a management fee to the agent's operating wallet. |
-| F8 | **Mock Smart Contracts** | Deploy on Base mainnet: HedgeToken (ERC-20, multiple instances for different asset classes), SavingsVault (simplified yield vault with drip function), HedgeRouter (swap USDC <-> hedge tokens). |
+| F8 | **Mock Smart Contracts** | Deploy on Base Sepolia: HedgeToken (ERC-20, multiple instances for different asset classes), SavingsVault (simplified yield vault with drip function), HedgeRouter (swap USDC <-> hedge tokens). |
 | F9 | **Autonomous Rebalancing** | A background service that periodically checks portfolio drift and triggers rebalance trades without human intervention. |
 
 ### P1 (Should Have)
@@ -75,7 +75,7 @@ Today this requires manual effort or expensive human advisors. An autonomous onc
 
 | ID | Feature | Description |
 |----|---------|-------------|
-| F14 | **Agent-to-Agent Commerce** | The savings agent can call other agents' x402 endpoints (e.g., a price oracle agent) and pay for data. |
+| F14 | **Agent-to-Agent Commerce** | The ClawVault agent can call other agents' x402 endpoints (e.g., a price oracle agent) and pay for data. |
 | F15 | **Risk Scoring** | More sophisticated plan creation that considers volatility, correlation, and Sharpe ratio. |
 | F16 | **Notification Service** | Alert the user when rebalancing occurs or when the portfolio hits a milestone. |
 
@@ -156,7 +156,7 @@ Today this requires manual effort or expensive human advisors. An autonomous onc
 ### Layout
 Single page, no navigation needed. Sections from top to bottom:
 
-1. **Header**: "Savings Agent" + agent wallet address (linked to BaseScan)
+1. **Header**: "ClawVault" + agent wallet address (linked to BaseScan)
 2. **Sustainability Status**: Large card showing:
    - Total Revenue (fees collected)
    - Total Compute Cost
@@ -180,7 +180,7 @@ Single page, no navigation needed. Sections from top to bottom:
 The project is organized as a **monorepo** with three independent packages in a single git repo:
 
 ```
-savingsagent/                     # Monorepo root
+clawvault/                     # Monorepo root
 ├── package.json                  # Root: npm workspaces config
 ├── .gitignore
 ├── PRD.md
@@ -215,15 +215,15 @@ savingsagent/                     # Monorepo root
 
 **Development with Anvil:**
 - `contracts/` uses Foundry with Anvil for local testing
-- Deploy script works against both Anvil (local) and Base mainnet
-- Agent's RPC URL is configurable: point to `http://127.0.0.1:8545` for Anvil or `https://mainnet.base.org` for production
+- Deploy script works against both Anvil (local) and Base Sepolia
+- Agent's RPC URL is configurable: point to `http://127.0.0.1:8545` for Anvil or `https://sepolia.base.org` for production
 
 ---
 
 ## Scope Boundaries
 
 ### In Scope (Hackathon)
-- Single-chain (Base mainnet only, Anvil for local dev)
+- Single-chain (Base Sepolia only, Anvil for local dev)
 - Mock hedge instruments (not real derivatives)
 - Simulated yield (drip function)
 - Single agent wallet (private key in env var)
@@ -245,7 +245,7 @@ savingsagent/                     # Monorepo root
 ## Success Metrics (Demo Day)
 
 1. Agent creates a savings plan from a natural language description
-2. Agent executes trades on Base mainnet to match the plan
+2. Agent executes trades on Base Sepolia to match the plan
 3. Every transaction has builder codes (verifiable on BaseScan)
 4. Vault generates yield, agent harvests it, skims fee
 5. Dashboard shows revenue > compute cost (self-sustaining)
@@ -259,7 +259,7 @@ savingsagent/                     # Monorepo root
 | Risk | Mitigation |
 |------|------------|
 | Builder code registration on base.dev may have a waitlist | Register immediately. If blocked, use a placeholder code and document the attempt. |
-| Base mainnet requires real ETH for gas | Pre-fund agent wallet with small amount (~$5 of ETH). Base gas is very cheap (~$0.001/tx). |
+| Base Sepolia requires real ETH for gas | Pre-fund agent wallet with small amount (~$5 of ETH). Base gas is very cheap (~$0.001/tx). |
 | Mock contracts need initial liquidity | Fund HedgeRouter with USDC and mint initial hedge token supply at deploy time. |
 | OpenClaw `api.registerService()` may not support HTTP servers | Fallback: run dashboard as a separate process started by the plugin. |
 | Yield simulation may look "fake" to judges | Be transparent in dashboard: label it "Simulated Yield (Hackathon Demo)" and explain in README. |

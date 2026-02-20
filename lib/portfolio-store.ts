@@ -4,7 +4,7 @@ import { homedir } from "node:os";
 import { randomBytes } from "node:crypto";
 import type { SavingsPlan, TransactionRecord } from "./types.js";
 
-const DATA_DIR = join(homedir(), ".savings-agent");
+const DATA_DIR = join(homedir(), ".clawvault");
 
 export class PortfolioStore {
   private plans: SavingsPlan[] = [];

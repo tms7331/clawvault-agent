@@ -9,7 +9,7 @@ export function startAutonomousLoop(ctx: PluginContext): () => void {
   const intervalMs = intervalMinutes * 60 * 1000;
 
   console.log(
-    `[savings-agent] Autonomous loop starting (every ${intervalMinutes} min)`
+    `[clawvault] Autonomous loop starting (every ${intervalMinutes} min)`
   );
 
   const interval = setInterval(async () => {
@@ -23,7 +23,7 @@ export function startAutonomousLoop(ctx: PluginContext): () => void {
 
       for (const plan of plans) {
         console.log(
-          `[savings-agent] Processing plan ${plan.planId}: ${plan.goal}`
+          `[clawvault] Processing plan ${plan.planId}: ${plan.goal}`
         );
 
         // 1. Harvest yield (includes drip)
@@ -31,13 +31,13 @@ export function startAutonomousLoop(ctx: PluginContext): () => void {
           const harvestResult = await executeHarvest(ctx, plan.planId);
           if (harvestResult.harvested) {
             console.log(
-              `[savings-agent] Harvested ${harvestResult.pendingYield} USDC yield, ` +
+              `[clawvault] Harvested ${harvestResult.pendingYield} USDC yield, ` +
                 `fee collected: $${harvestResult.feeCollected.toFixed(4)}`
             );
           }
         } catch (err) {
           console.error(
-            `[savings-agent] Harvest failed for ${plan.planId}:`,
+            `[clawvault] Harvest failed for ${plan.planId}:`,
             err
           );
         }
@@ -47,17 +47,17 @@ export function startAutonomousLoop(ctx: PluginContext): () => void {
           const rebalanceResult = await executeRebalance(ctx, plan.planId);
           if (rebalanceResult.rebalanced) {
             console.log(
-              `[savings-agent] Rebalanced ${plan.planId}: ${rebalanceResult.trades.length} trades`
+              `[clawvault] Rebalanced ${plan.planId}: ${rebalanceResult.trades.length} trades`
             );
           } else {
             console.log(
-              `[savings-agent] No rebalance needed for ${plan.planId} ` +
+              `[clawvault] No rebalance needed for ${plan.planId} ` +
                 `(drift: ${rebalanceResult.maxDrift.toFixed(1)}%)`
             );
           }
         } catch (err) {
           console.error(
-            `[savings-agent] Rebalance failed for ${plan.planId}:`,
+            `[clawvault] Rebalance failed for ${plan.planId}:`,
             err
           );
         }
@@ -70,16 +70,16 @@ export function startAutonomousLoop(ctx: PluginContext): () => void {
       const net = ctx.costTracker.getNetBalance();
       const sustainable = ctx.costTracker.isSelfSustaining();
       console.log(
-        `[savings-agent] Sustainability: ${sustainable ? "YES" : "NO"} ` +
+        `[clawvault] Sustainability: ${sustainable ? "YES" : "NO"} ` +
           `(net: $${net.toFixed(4)})`
       );
     } catch (err) {
-      console.error("[savings-agent] Autonomous loop error:", err);
+      console.error("[clawvault] Autonomous loop error:", err);
     }
   }, intervalMs);
 
   return () => {
-    console.log("[savings-agent] Autonomous loop stopped");
+    console.log("[clawvault] Autonomous loop stopped");
     clearInterval(interval);
   };
 }

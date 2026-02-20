@@ -16,7 +16,7 @@ async function approveIfNeeded(
   amount: bigint,
   planId: string
 ): Promise<string | null> {
-  const builderCode = ctx.config.builderCode ?? "savingsagent";
+  const builderCode = ctx.config.builderCode ?? "clawvault";
 
   const hash = await sendTxWithBuilderCode(ctx.client, {
     to: ADDRESSES.usdc,
@@ -51,7 +51,7 @@ async function depositToVault(
   amount: bigint,
   planId: string
 ): Promise<string> {
-  const builderCode = ctx.config.builderCode ?? "savingsagent";
+  const builderCode = ctx.config.builderCode ?? "clawvault";
 
   const hash = await sendTxWithBuilderCode(ctx.client, {
     to: ADDRESSES.savingsVault,
@@ -88,7 +88,7 @@ async function buyHedge(
   usdcAmount: bigint,
   planId: string
 ): Promise<string> {
-  const builderCode = ctx.config.builderCode ?? "savingsagent";
+  const builderCode = ctx.config.builderCode ?? "clawvault";
 
   const hash = await sendTxWithBuilderCode(ctx.client, {
     to: ADDRESSES.hedgeRouter,
@@ -120,7 +120,7 @@ async function buyHedge(
 
 export function registerExecuteTrades(api: any, ctx: PluginContext) {
   api.registerTool({
-    name: "savings_execute_trades",
+    name: "clawvault_execute_trades",
     description:
       "Execute onchain trades on Base to match a savings plan's target allocation. " +
       "Deposits USDC into the yield vault for the stable portion, and swaps USDC " +
@@ -132,7 +132,7 @@ export function registerExecuteTrades(api: any, ctx: PluginContext) {
       properties: {
         planId: {
           type: "string",
-          description: "The plan ID returned by savings_create_plan",
+          description: "The plan ID returned by clawvault_create_plan",
         },
       },
       required: ["planId"],

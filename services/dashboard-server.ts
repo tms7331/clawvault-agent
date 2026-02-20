@@ -129,7 +129,7 @@ export function startDashboardServer(ctx: PluginContext): () => void {
         res.end(JSON.stringify({ error: "Not found" }));
       }
     } catch (err: any) {
-      console.error("[savings-agent] API error:", err);
+      console.error("[clawvault] API error:", err);
       res.writeHead(500, { "Content-Type": "application/json" });
       res.end(JSON.stringify({ error: err.message }));
     }
@@ -137,12 +137,12 @@ export function startDashboardServer(ctx: PluginContext): () => void {
 
   server.listen(port, "127.0.0.1", () => {
     console.log(
-      `[savings-agent] Debug API running at http://127.0.0.1:${port}`
+      `[clawvault] Debug API running at http://127.0.0.1:${port}`
     );
   });
 
   return () => {
     server.close();
-    console.log("[savings-agent] Debug API stopped");
+    console.log("[clawvault] Debug API stopped");
   };
 }
