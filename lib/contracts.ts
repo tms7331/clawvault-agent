@@ -5,7 +5,7 @@ import { type ContractAddresses } from "./types.js";
 // For Anvil local dev, run the deploy script and paste addresses here.
 
 export const ADDRESSES: ContractAddresses = {
-  usdc: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913", // USDC on Base mainnet
+  usdc: "0x0000000000000000000000000000000000000000", // MockUSDC (fill after deploy on Base Sepolia)
   savingsVault: "0x0000000000000000000000000000000000000000",
   hedgeRouter: "0x0000000000000000000000000000000000000000",
   reHedge: "0x0000000000000000000000000000000000000000",

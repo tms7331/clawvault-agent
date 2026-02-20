@@ -12,8 +12,8 @@
       },
       "rpcUrl": {
         "type": "string",
-        "description": "Base RPC URL (Anvil for local dev, mainnet for production)",
-        "default": "http://127.0.0.1:8545"
+        "description": "Base Sepolia RPC URL (Anvil for local dev, Sepolia for testing)",
+        "default": "https://sepolia.base.org"
       },
       "builderCode": {
         "type": "string",

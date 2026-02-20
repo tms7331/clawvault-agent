@@ -16,7 +16,7 @@ let dashboardCleanup: (() => void) | null = null;
 export default function register(api: any) {
   const config: PluginConfig = {
     privateKey: api.config?.privateKey ?? process.env.SAVINGS_AGENT_PRIVATE_KEY ?? "",
-    rpcUrl: api.config?.rpcUrl ?? process.env.BASE_RPC_URL ?? "http://127.0.0.1:8545",
+    rpcUrl: api.config?.rpcUrl ?? process.env.BASE_RPC_URL ?? "https://sepolia.base.org",
     builderCode: api.config?.builderCode ?? process.env.BUILDER_CODE ?? "savingsagent",
     dashboardPort: api.config?.dashboardPort ?? (Number(process.env.DASHBOARD_PORT) || 3402),
     rebalanceIntervalMinutes:
