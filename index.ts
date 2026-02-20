@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { createBaseClient } from "./lib/base-client.js";
 import { PortfolioStore } from "./lib/portfolio-store.js";
 import { CostTracker } from "./lib/cost-tracker.js";
