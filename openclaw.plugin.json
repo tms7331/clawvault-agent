@@ -40,7 +40,6 @@
         "description": "Management fee in basis points (100 = 1%)",
         "default": 200
       }
-    },
-    "required": ["privateKey"]
+    }
   }
 }
