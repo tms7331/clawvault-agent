@@ -1,4 +1,10 @@
-import "dotenv/config";
+import { config as dotenvConfig } from "dotenv";
+import { fileURLToPath } from "node:url";
+import { dirname, join } from "node:path";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+dotenvConfig({ path: join(__dirname, ".env") });
+
 import { createBaseClient } from "./lib/base-client.js";
 import { PortfolioStore } from "./lib/portfolio-store.js";
 import { CostTracker } from "./lib/cost-tracker.js";
